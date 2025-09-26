@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Volume2, VolumeX, Clock, MapPin, Calendar, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Volume2, VolumeX, Clock, MapPin, Calendar, ExternalLink, Bot } from 'lucide-react';
 import ThreeDViewer from '../components/ThreeDViewer';
 import VoiceAssistant from '../components/VoiceAssistant';
 import HistoricalView from '../components/HistoricalView';
+import AIChat from '../components/AIChat';
 
 const heritagePlaces = {
   'taj-mahal': {
@@ -80,6 +81,7 @@ function ModelViewer() {
   const place = heritagePlaces[placeId as keyof typeof heritagePlaces];
   const [showHistorical, setShowHistorical] = useState(false);
   const [isVoiceActive, setIsVoiceActive] = useState(false);
+  const [showAIChat, setShowAIChat] = useState(false);
 
   if (!place) {
     return (
@@ -95,8 +97,8 @@ function ModelViewer() {
   }
 
   const handleVisitBooking = () => {
-    if (place.hasBooking && place.bookingUrl) {
-      window.open(place.bookingUrl, '_blank');
+    if (place.hasBooking && (place as any).bookingUrl) {
+      window.open((place as any).bookingUrl, '_blank');
     }
   };
 
@@ -119,13 +121,20 @@ function ModelViewer() {
               <button
                 onClick={() => setShowHistorical(!showHistorical)}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
-                  showHistorical 
-                    ? 'bg-purple-600 text-white' 
+                  showHistorical
+                    ? 'bg-purple-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
                 <Clock className="w-4 h-4" />
                 <span>Historical View</span>
+              </button>
+              <button
+                onClick={() => setShowAIChat(true)}
+                className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+              >
+                <Bot className="w-4 h-4" />
+                <span>AI Assistant</span>
               </button>
               {place.hasBooking && (
                 <button
@@ -209,6 +218,7 @@ function ModelViewer() {
           </div>
         </div>
       </div>
+      {showAIChat && <AIChat placeName={place.name} onClose={() => setShowAIChat(false)} />}
     </div>
   );
 }
